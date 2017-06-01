@@ -142,7 +142,7 @@ def main():
 
         # The population is entirely replaced by the offspring
         pop[:] = offspring
-        all.append(pop)
+        # all.append(pop)
 
         # Gather all the fitnesses in one list and print the stats
         fits = [ind.fitness.values[0] for ind in pop]

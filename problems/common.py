@@ -1,14 +1,16 @@
 import json
 import os
 import sys
-from time import sleep
+import time
 
 import numpy
-import progressbar as pb
-
-from tsne.tsne import tsne
+from sklearn.manifold import TSNE, MDS
 
 path = 'data'
+methods = {
+    'tsne': TSNE,
+    'mds': MDS
+}
 perplexity = 30.0
 
 
@@ -25,58 +27,87 @@ def enable_print():
 # This method applies the tsne method to every individual
 # in the population to reduce it to a 2 and 3 dimension individual
 def save(all, extra={}):
+    for method in methods:
+        extra['method'] = method
+        # save_data(all, extra)
+
+    update_info()
+    return
+
+
+def save_data(all, extra):
     pop2d = list()
     pop3d = list()
     solution = extra['solution']
-
     print 'Reducing results for %s problem' % extra['problem']
 
-    bar = pb.ProgressBar(maxval=40, widgets=[pb.Bar('=', '[', ']'), ' ', pb.Percentage()], redirect_stdout=True)
-    bar.start()
-    i = 0
-    for gen in all:
-        # add solution to generation
-        gen.append(solution)
+    block_number = len(all)
+    matrix = numpy.array(all)
+    matrix = matrix.reshape((len(all) * len(all[0]), -1))
+    matrix = numpy.append(matrix, [solution], 0)
 
-        gen2d = numpy.array(gen)
-        gen3d = numpy.array(gen)
+    # gen2d = tsne(matrix, 2, extra['ind_size'], perplexity)
 
-        block_print()
+    # gen3d = tsne(matrix, 3, extra['ind_size'], perplexity)
 
-        # reducing to 2D
-        # gen2d = tsne(gen2d, 2, extra['ind_size'], perplexity)
-        pop2d.append(gen2d.tolist())
+    # manifold tsne
 
-        # reducing to 3D
-        gen3d = tsne(gen3d, 3, extra['ind_size'], perplexity)
-        pop3d.append(gen3d.tolist())
+    func = methods.get(extra['method'])
+    model = func(n_components=2)
+    # model = TSNE(n_components=2, random_state=0)
+    gen2d = model.fit_transform(matrix)
+    gen2d_solution = gen2d[-1].tolist()
+    gen2d = gen2d[:-1]
+    gen2d = numpy.vsplit(gen2d, block_number)
 
-        enable_print()
+    for gen in gen2d:
+        temp = gen.tolist()
+        # temp.append(gen2d_solution)
+        pop2d.append(temp)
 
-        bar.update(int(40 * i / len(all)))  # extra['NGEN']
-        i += 1
-        sleep(.1)
+    model = func(n_components=3)
+    # model = TSNE(n_components=3, random_state=0)
+    gen3d = model.fit_transform(matrix)
+    gen3d_solution = gen3d[-1].tolist()
+    gen3d = gen3d[:-1]
+    gen3d = numpy.vsplit(gen3d, block_number)
 
-    bar.finish()
-
-    # solution = solution * extra['pop_size']
+    for gen in gen3d:
+        temp = gen.tolist()
+        # temp.append(gen3d_solution)
+        pop3d.append(temp)
 
     data = {
         '2d': {
-            # 'data': pop2d,
-            'solution': ''  # tsne(numpy.array(solution), 2, extra['ind_size'], perplexity)
+            'data': pop2d,
+            'solution': gen2d_solution
         },
         '3d': {
-            'solution': '',
+            'solution': gen3d_solution,
             'data': pop3d
         },
         'extra': extra
     }
     # saving the to json file
-
     print 'Saving data to file...'
-    filename = extra['problem'] + '.json'
+    filename = '%s%s.json' % (extra['problem'], time.time())
     with open(os.path.join(path, filename), 'w') as file:
         json.dump(data, file)
     print 'Saved to %s' % os.path.join(path, filename)
+
+
+def update_info():
+    json_files = [pos_json for pos_json in os.listdir(path) if (pos_json.endswith('.json') and
+                                                                not pos_json.startswith('info'))]
+    info_data = list()
+    for filename in json_files:
+        with open(os.path.join(path, filename)) as json_file:
+            # do something with your json; I'll just print
+            json_data = json.load(json_file)
+            new_data = json_data['extra']
+            new_data['filename'] = filename
+            info_data.append(new_data)
+
+    with open(os.path.join(path, 'info.json'), 'w') as outfile:
+        json.dump(info_data, outfile)
     return

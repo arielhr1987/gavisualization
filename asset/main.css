@@ -20,11 +20,21 @@
     margin: 20px 0;
 }
 
-#simple-slider-generation, #progress-slider-generation {
+#table-files .btn {
+    min-width: 80px;
+}
+
+#simple-slider-generation,
+#simple-slider-generation-2d,
+#progress-slider-generation,
+#progress-slider-generation-2d {
     margin-top: 15px;
 }
 
-#simple-slider-generation:before, #progress-slider-generation:before {
+#simple-slider-generation:before,
+#simple-slider-generation-2d:before,
+#progress-slider-generation:before,
+#progress-slider-generation-2d:before {
     content: "Generation: ";
 }
 

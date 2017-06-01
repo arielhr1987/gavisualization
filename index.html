@@ -11,13 +11,14 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="asset/main.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>-->
-    <!--    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -26,7 +27,7 @@
     <div class="container">
         <h1>Data visualization</h1>
         <p class="text-muted">
-            A visualization tool for GA problems
+            A visualization tool for EA problems
         </p>
     </div>
 </header>
@@ -41,11 +42,20 @@
                 <a href="#tab-home" aria-controls="tab-home" role="tab" data-toggle="tab">Home</a>
             </li>
             <li role="presentation">
-                <a href="#tab-simple" aria-controls="tab-simple" role="tab" data-toggle="tab">Simple visualization</a>
+                <a href="#tab-simple" aria-controls="tab-simple" role="tab" data-toggle="tab">Simple visualization
+                    3D</a>
             </li>
             <li role="presentation">
                 <a href="#tab-progress" aria-controls="tab-progress" role="tab" data-toggle="tab">Progress
-                    visualization</a>
+                    visualization 3D</a>
+            </li>
+            <li role="presentation">
+                <a href="#tab-simple-2d" aria-controls="tab-simple" role="tab" data-toggle="tab">Simple visualization
+                    2D</a>
+            </li>
+            <li role="presentation">
+                <a href="#tab-progress-2d" aria-controls="tab-progress" role="tab" data-toggle="tab">Progress
+                    visualization 2D</a>
             </li>
         </ul>
 
@@ -55,6 +65,24 @@
                 <p style="padding: 20px 0 0 0">
                     Select the problem data to visualize
                 </p>
+                <div class="table-responsive">
+                    <table class="table" id="table-files">
+                        <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Reduction Method</th>
+                            <th>Problem</th>
+                            <th>Generations</th>
+                            <th>Population size</th>
+                            <th>Individual size</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="tab-simple">
                 <div class="row">
@@ -73,6 +101,29 @@
                         <div id="progress-plot" style=""></div>
                         <div id="progress-slider"></div>
                         <p id="progress-slider-generation">
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab-simple-2d">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="simple-plot-2d" style="display:inline-block;"></div>
+                        <div id="simple-slider-2d"></div>
+                        <p id="simple-slider-generation-2d">
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="tab-progress-2d">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="progress-plot-2d" style=""></div>
+                        <div id="progress-slider-2d"></div>
+                        <p id="progress-slider-generation-2d">
 
                         </p>
                     </div>
