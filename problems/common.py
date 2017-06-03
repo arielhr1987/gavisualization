@@ -4,13 +4,26 @@ import sys
 import time
 
 import numpy
-from sklearn.manifold import TSNE, MDS
+from sklearn.manifold import TSNE, MDS, Isomap, LocallyLinearEmbedding, SpectralEmbedding
 
 path = 'data'
 methods = {
-    'tsne': TSNE,
-    'mds': MDS
+    'TSNE': TSNE,
+    'MDS': MDS,
+    'Isomap': Isomap,
+    'SE': SpectralEmbedding,  # Hessian Eigenmapping
+    'LLE': LocallyLinearEmbedding,
+    # 'MLLE': LocallyLinearEmbedding,  # (method = 'modified')
+    # 'HE': LocallyLinearEmbedding,  # (method = 'hessian') # Hessian Eigenmapping
+    # 'LTSA': LocallyLinearEmbedding  # method = 'ltsa' # Hessian Eigenmapping
 }
+
+method_param = {
+    'MLLE': 'modified',
+    'HE': 'hessian',
+    'LTSA': 'ltsa'
+}
+
 perplexity = 30.0
 
 
@@ -50,9 +63,15 @@ def save_data(all, extra):
     # gen3d = tsne(matrix, 3, extra['ind_size'], perplexity)
 
     # manifold tsne
+    method = extra['method']
+    param = method_param.get(method)
+    func = methods.get(method)
+    model = {}
+    if method == 'MLLE' or method == "HE" or method == "LTSA":
+        model = func(n_components=2, method=param)
+    elif method == "TSNE" or method == "MDS" or method == "Isomap" or method == "LLE" or method == "SE":
+        model = func(n_components=2)
 
-    func = methods.get(extra['method'])
-    model = func(n_components=2)
     # model = TSNE(n_components=2, random_state=0)
     gen2d = model.fit_transform(matrix)
     gen2d_solution = gen2d[-1].tolist()
@@ -64,8 +83,13 @@ def save_data(all, extra):
         # temp.append(gen2d_solution)
         pop2d.append(temp)
 
-    model = func(n_components=3)
-    # model = TSNE(n_components=3, random_state=0)
+    if method == 'MLLE' or method == "HE" or method == "LTSA":
+        model = func(n_components=3, method=param)
+    elif method == "TSNE" or method == "MDS" or method == "Isomap" or method == "LLE" or method == "SE":
+        model = func(n_components=3)
+
+    # model = func(n_components=3)
+
     gen3d = model.fit_transform(matrix)
     gen3d_solution = gen3d[-1].tolist()
     gen3d = gen3d[:-1]

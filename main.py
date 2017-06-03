@@ -1,11 +1,13 @@
 import json
 import os
 
+import problems
+
 path = 'data'
 
 
 def main():
-    # problems.onemax.main()
+    problems.onemax.main()
     update_info()
 
 
