@@ -9,10 +9,11 @@ from sklearn.manifold import TSNE, MDS, Isomap, LocallyLinearEmbedding, Spectral
 path = 'data'
 methods = {
     'TSNE': TSNE,
-    'MDS': MDS,
-    'Isomap': Isomap,
-    'SE': SpectralEmbedding,  # Hessian Eigenmapping
-    'LLE': LocallyLinearEmbedding,
+    # 'MDS': MDS,
+    # 'Isomap': Isomap,
+    # 'SE': SpectralEmbedding,  # Hessian Eigenmapping
+    # 'LLE': LocallyLinearEmbedding,
+    # ------------------------------------------------------------------------------
     # 'MLLE': LocallyLinearEmbedding,  # (method = 'modified')
     # 'HE': LocallyLinearEmbedding,  # (method = 'hessian') # Hessian Eigenmapping
     # 'LTSA': LocallyLinearEmbedding  # method = 'ltsa' # Hessian Eigenmapping
@@ -50,9 +51,11 @@ def save(all, extra={}):
 def save_data(all, extra):
     pop2d = list()
     pop3d = list()
+    fitness = list();
     solution = extra['solution']
     print 'Reducing results for %s problem' % extra['problem']
 
+    extra['fitness'] = collect_fitness(all)
     block_number = len(all)
     matrix = numpy.array(all)
     matrix = matrix.reshape((len(all) * len(all[0]), -1))
@@ -117,3 +120,13 @@ def save_data(all, extra):
     with open(os.path.join(path, filename), 'w') as file:
         json.dump(data, file)
     print 'Saved to %s' % os.path.join(path, filename)
+
+
+def collect_fitness(all):
+    fitness = list()
+    for gen in all:
+        fitness_gen = list()
+        for ind in gen:
+            fitness_gen.append(ind.fitness.values[0])
+        fitness.append(fitness_gen)
+    return fitness

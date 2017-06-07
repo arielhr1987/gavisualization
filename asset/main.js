@@ -163,7 +163,7 @@ function initializeSliders(data) {
                 var el = $(this);
             }
         });
-
+    let fitness = data['extra']['fitness'];
     let commonOptions = {
         start: 1,
         step: 1,
@@ -220,7 +220,13 @@ function initializeSliders(data) {
 
     simpleSlider.noUiSlider.on('set', function () {
         let i = parseInt(this.get()) - 1;
-        let data = createData(dataPlot[i], {name: 'Generation ' + (i + 1)});
+        let data = createData(dataPlot[i], {
+            name: 'Generation ' + (i + 1),
+            marker: {
+                color: colors(fitness[i]),
+                size: 4
+            }
+        });
         if (document.getElementById('simple-plot').data.length > 1) {
             // Plotly.deleteTraces('simple-plot', [0, 1]);
             Plotly.deleteTraces('simple-plot', 1);
@@ -285,7 +291,8 @@ function createSolucionData(solution, obj) {
 function createData(rows, obj) {
 
     let marker = {
-        color: 'rgb(23, 190, 207)',
+        //color: 'rgb(23, 190, 207)',
+        color: ['red', 'blue', 'black', 'purple'],
         size: 4
     };
     let xdata = unpack(rows, 0);
@@ -307,6 +314,10 @@ function createData(rows, obj) {
     }
     let tempData = $.extend(parentObj, obj);
     return [tempData];
+}
+
+function createMarkerColor() {
+    let colors = [];
 }
 
 function unpack(rows, key) {
@@ -345,3 +356,57 @@ Array.prototype.max = function () {
 Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
+
+function colors(fitness) {
+    let count = 10;
+    let colors = [];
+    let startColor = [255, 255, 190];
+    let finalColor = [130, 0, 40];
+    let rDif = (startColor[0] - finalColor[0]) / count;
+    let gDif = (startColor[1] - finalColor[1]) / count;
+    let bDif = (startColor[2] - finalColor[2]) / count;
+    //colors.push(finalColor);
+    for (let i = 0; i < count; i++) {
+        colors.push([
+            Math.round(finalColor[0] + (i * rDif)),
+            Math.round(finalColor[1] + (i * gDif)),
+            Math.round(finalColor[2] + (i * bDif))
+        ])
+    }
+    //colors.push(startColor);
+    for (let i = 0; i < count; i++) {
+        colors[i] = "rgb(" + colors[i].join(',') + ")";
+    }
+    colors = [
+        "#00FF40",
+        "#1EFF74",
+        "#35FFA6",
+        "#45FFD4",
+        "#4BFFFF",
+        "#49E9FF",
+        "#3EBDFF",
+        "#2A8EFF",
+        "#1E74FF",
+        "#0040FF"
+
+    ];
+    console.info(colors);
+
+    let max = fitness.max();
+    let min = fitness.min();
+    let ret_colors = [];
+    let dif = (max - min) / count;
+
+    for (let i = 0; i < fitness.length; i++) {
+        let value = fitness[i];
+        for (let j = 0; j < count - 1; j++) {
+            if (value > (min + (j * dif)) && value <= (min + ((j + 1) * dif))) {
+                ret_colors.push(colors[j]);
+                break;
+            }
+        }
+    }
+    return ret_colors;
+}
+
+//colors();

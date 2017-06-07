@@ -85,9 +85,6 @@ def main():
     # each individual is a list of integers)
     pop = toolbox.population(n=population_size)
 
-    all = list()
-    all.append(pop)
-
     # CXPB  is the probability with which two individuals
     #       are crossed
     #
@@ -103,6 +100,9 @@ def main():
     fitnesses = list(map(toolbox.evaluate, pop))
     for ind, fit in zip(pop, fitnesses):
         ind.fitness.values = fit
+
+    all = list()
+    all.append(pop)
 
     print("  Evaluated %i individuals" % len(pop))
 
