@@ -24,21 +24,11 @@
     min-width: 80px;
 }
 
-#simple-slider-generation,
-#simple-slider-generation-2d,
-#heatmap-slider-generation,
-#progress-slider-generation,
-#progress-slider-generation-2d,
-#heatmap-slider-generation-2d {
+.generation-slider {
     margin-top: 15px;
 }
 
-#simple-slider-generation:before,
-#simple-slider-generation-2d:before,
-#heatmap-slider-generation:before,
-#progress-slider-generation:before,
-#progress-slider-generation-2d:before,
-#heatmap-slider-generation-2d:before {
+.slider-generation:before {
     content: "Generation: ";
 }
 

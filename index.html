@@ -60,6 +60,9 @@
                 <a href="#tab-progress-2d" aria-controls="tab-progress" role="tab" data-toggle="tab">Progress
                     visualization 2D</a>
             </li>
+            <li role="presentation">
+                <a href="#tab-heatmap-2d" aria-controls="tab-heatmap" role="tab" data-toggle="tab">Heatmap 2D</a>
+            </li>
         </ul>
 
         <!-- Tab panes -->
@@ -91,8 +94,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="simple-plot" style="width:49%;height:50%;display:inline-block;"></div>
-                        <div id="simple-slider"></div>
-                        <p id="simple-slider-generation">
+                        <div id="simple-slider" class="slider-generation"></div>
+                        <p id="simple-slider-generation" class="generation-slider">
 
                         </p>
                     </div>
@@ -102,8 +105,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="progress-plot" style=""></div>
-                        <div id="progress-slider"></div>
-                        <p id="progress-slider-generation">
+                        <div id="progress-slider" class="slider-generation"></div>
+                        <p id="progress-slider-generation" class="generation-slider">
 
                         </p>
                     </div>
@@ -113,8 +116,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="heatmap-plot" style=""></div>
-                        <div id="heatmap-slider"></div>
-                        <p id="heatmap-slider-generation">
+                        <div id="heatmap-slider" class="slider-generation"></div>
+                        <p id="heatmap-slider-generation" class="generation-slider">
 
                         </p>
                     </div>
@@ -124,8 +127,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="simple-plot-2d" style="display:inline-block;"></div>
-                        <div id="simple-slider-2d"></div>
-                        <p id="simple-slider-generation-2d">
+                        <div id="simple-slider-2d" class="slider-generation"></div>
+                        <p id="simple-slider-generation-2d" class="generation-slider">
 
                         </p>
                     </div>
@@ -136,8 +139,20 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div id="progress-plot-2d" style=""></div>
-                        <div id="progress-slider-2d"></div>
-                        <p id="progress-slider-generation-2d">
+                        <div id="progress-slider-2d" class="slider-generation"></div>
+                        <p id="progress-slider-generation-2d" class="generation-slider">
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="tab-heatmap-2d">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="heatmap-plot-2d" style=""></div>
+                        <div id="heatmap-slider-2d" class="slider-generation"></div>
+                        <p id="heatmap-slider-generation-2d" class="generation-slider">
 
                         </p>
                     </div>

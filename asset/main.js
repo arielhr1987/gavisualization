@@ -29,6 +29,14 @@ $(function () {
 function loadData(filename, btn) {
     $.getJSON('data/' + filename, function (data) {
 
+        let fitness = data['extra']['fitness'];
+        let fitnessMin = fitness.map(function (gen) {
+            return gen.min();
+        }).min();
+        let fitnessMax = fitness.map(function (gen) {
+            return gen.max();
+        }).max();
+
         //2D Visualization
         let dataPlot2d = data['2d']['data'];
         let solutionData = createSolucionData(data['2d']['solution'], {type: 'scatter'});
@@ -55,17 +63,13 @@ function loadData(filename, btn) {
         };
         Plotly.newPlot('simple-plot-2d', [], layout);
         Plotly.addTraces('simple-plot-2d', solutionData);
-
-        Plotly.newPlot('progress-plot-2d', [], layout);
-        Plotly.addTraces('progress-plot-2d', solutionData);
         for (let i = 0; i < dataPlot2d.length; i++) {
             let newData = createData(dataPlot2d[i], {
                 name: 'Generation ' + (i + 1),
-                marker: {size: 4},
                 type: 'scatter',
                 visible: false
-            });
-            Plotly.addTraces('progress-plot-2d', newData);
+            }, fitness[i]);
+            Plotly.addTraces('simple-plot-2d', newData);
         }
 
         Plotly.newPlot('progress-plot-2d', [], layout);
@@ -76,8 +80,24 @@ function loadData(filename, btn) {
                 marker: {size: 4},
                 type: 'scatter',
                 visible: false
-            });
+            }, fitness[i]);
             Plotly.addTraces('progress-plot-2d', newData);
+        }
+        let layout2 = $.extend({}, layout);
+        layout2.showlegend = false;
+        Plotly.newPlot('heatmap-plot-2d', [], layout2);
+        Plotly.addTraces('heatmap-plot-2d', solutionData);
+        for (let i = 0; i < dataPlot2d.length; i++) {
+            let newData = createData(dataPlot2d[i], {
+                name: 'Generation ' + (i + 1),
+                marker: {
+                    color: colors(fitness[i], fitnessMin, fitnessMax),
+                    size: 4
+                },
+                type: 'scatter',
+                visible: false
+            }, fitness[i]);
+            Plotly.addTraces('heatmap-plot-2d', newData);
         }
 
         //3D visualization
@@ -134,7 +154,13 @@ function loadData(filename, btn) {
 
         var chart = Plotly.newPlot('simple-plot', [], layout3d);
         Plotly.addTraces('simple-plot', solutionData);
-
+        for (let i = 0; i < dataPlot3d.length; i++) {
+            let newData = createData(dataPlot3d[i], {
+                name: 'Generation ' + (i + 1),
+                visible: false
+            }, fitness[i]);
+            Plotly.addTraces('simple-plot', newData);
+        }
 
         var chart2 = Plotly.newPlot('progress-plot', [], layout3d);
         Plotly.addTraces('progress-plot', solutionData);
@@ -143,18 +169,13 @@ function loadData(filename, btn) {
                 name: 'Generation ' + (i + 1),
                 marker: {size: 4},
                 visible: false
-            });
+            }, fitness[i]);
             Plotly.addTraces('progress-plot', newData);
         }
-        let fitness = data['extra']['fitness'];
-        let fitnessMin = fitness.map(function (gen) {
-            return gen.min();
-        }).min();
-        let fitnessMax = fitness.map(function (gen) {
-            return gen.max();
-        }).max();
-        layout3d.showlegend = false;
-        var chart3 = Plotly.newPlot('heatmap-plot', [], layout3d);
+
+        let layout3d2 = $.extend({}, layout3d);
+        layout3d2.showlegend = false;
+        var chart3 = Plotly.newPlot('heatmap-plot', [], layout3d2);
         Plotly.addTraces('heatmap-plot', solutionData);
         for (let i = 0; i < dataPlot3d.length; i++) {
             let newData = createData(dataPlot3d[i], {
@@ -164,9 +185,11 @@ function loadData(filename, btn) {
                     size: 4
                 },
                 visible: false
-            });
+            }, fitness[i]);
             Plotly.addTraces('heatmap-plot', newData);
         }
+        let chartDiv = document.getElementById('heatmap-plot');
+
         initializeSliders(data);
     }).done(function () {
         btn.button('reset');
@@ -174,7 +197,7 @@ function loadData(filename, btn) {
 }
 
 function initializeSliders(data) {
-    $('#simple-slider-2d, #progress-slider-2d, #simple-slider, #progress-slider, #heatmap-slider')
+    $('.slider-generation')
         .empty()
         .removeAttr('class')
         .each(function () {
@@ -203,11 +226,16 @@ function initializeSliders(data) {
     noUiSlider.create(simpleSlider2d, commonOptions, true);
     simpleSlider2d.noUiSlider.on('set', function () {
         let i = parseInt(this.get()) - 1;
-        let data = createData(dataPlot2d[i], {name: 'Generation ' + (i + 1), type: 'scatter'});
-        if (document.getElementById('simple-plot-2d').data.length > 1) {
-            Plotly.deleteTraces('simple-plot-2d', 1);
-        }
-        Plotly.addTraces('simple-plot-2d', data);
+        var plotDiv = document.getElementById('simple-plot-2d');
+        var plotData = plotDiv.data;
+        $.each(plotData, function (key, value) {
+            var visibilty = false;
+            if (key == (i + 1) || key == 0) {
+                visibilty = true;
+            }
+            plotDiv.data[key].visible = visibilty;
+        });
+        Plotly.redraw(plotDiv);
         $("#simple-slider-generation-2d").text(i + 1);
     });
     simpleSlider2d.noUiSlider.set(1);
@@ -232,6 +260,25 @@ function initializeSliders(data) {
     });
     progressSlider2d.noUiSlider.set(1);
 
+    var heatmapSlider2d = document.getElementById('heatmap-slider-2d');
+    noUiSlider.create(heatmapSlider2d, commonOptions, true);
+
+    heatmapSlider2d.noUiSlider.on('set', function () {
+        let i = parseInt(this.get()) - 1;
+        var plotDiv = document.getElementById('heatmap-plot-2d');
+        var plotData = plotDiv.data;
+        $.each(plotData, function (key, value) {
+            var visibilty = false;
+            if (key <= i + 1) {
+                visibilty = true;
+            }
+            plotDiv.data[key].visible = visibilty;
+        });
+        Plotly.redraw(plotDiv);
+        $("#heatmap-slider-generation-2d").text(i + 1);
+    });
+    heatmapSlider2d.noUiSlider.set(1);
+
 
     //3D Visualization sliders
     var dataPlot = data['3d']['data'];
@@ -240,14 +287,26 @@ function initializeSliders(data) {
 
     simpleSlider.noUiSlider.on('set', function () {
         let i = parseInt(this.get()) - 1;
-        let data = createData(dataPlot[i], {
-            name: 'Generation ' + (i + 1)
+        // let data = createData(dataPlot[i], {
+        //     name: 'Generation ' + (i + 1)
+        // });
+        // if (document.getElementById('simple-plot').data.length > 1) {
+        //     // Plotly.deleteTraces('simple-plot', [0, 1]);
+        //     Plotly.deleteTraces('simple-plot', 1);
+        // }
+        // Plotly.addTraces('simple-plot', data);
+
+        var plotDiv = document.getElementById('simple-plot');
+        var plotData = plotDiv.data;
+        $.each(plotData, function (key, value) {
+            var visibilty = false;
+            if (key == (i + 1) || key == 0) {
+                visibilty = true;
+            }
+            plotDiv.data[key].visible = visibilty;
         });
-        if (document.getElementById('simple-plot').data.length > 1) {
-            // Plotly.deleteTraces('simple-plot', [0, 1]);
-            Plotly.deleteTraces('simple-plot', 1);
-        }
-        Plotly.addTraces('simple-plot', data);
+        Plotly.redraw(plotDiv);
+
         $("#simple-slider-generation").text(i + 1);
     });
     simpleSlider.noUiSlider.set(1);
@@ -325,7 +384,7 @@ function createSolucionData(solution, obj) {
     return createData([solution], tempObj);
 }
 
-function createData(rows, obj) {
+function createData(rows, obj, fitness = []) {
 
     let marker = {
         color: 'rgb(23, 190, 207)',
@@ -335,12 +394,20 @@ function createData(rows, obj) {
     let xdata = unpack(rows, 0);
     let ydata = unpack(rows, 1);
     let zdata = unpack(rows, 2);
+    let textData = fitness;
+    if (fitness.length > 0) {
+        let textData = fitness.map(function (el) {
+            return "Fitness: " + el + "<br>";
+        });
+    }
 
     let parentObj = {
         x: xdata,
         y: ydata,
         //z: zdata,
         mode: 'markers',
+        hoverinfo: 'text+x+y+z+name',
+        text: textData,
         name: '',
         type: 'scatter3d',
         visible: true,
@@ -420,13 +487,13 @@ function colors(fitness, min, max) {
         // "#45FFD4",
         "#4BFFFF",
         // "#49E9FF",
-         "#3EBDFF",
+        "#3EBDFF",
         //"#2A8EFF",
         // "#1E74FF",
         "#0040FF"
 
     ];
-    console.info(colors);
+    //console.info(colors);
 
     //let max = fitness.max();
     //let min = fitness.min();
@@ -441,7 +508,7 @@ function colors(fitness, min, max) {
                 break;
             }
             if (j == (count - 1)) {
-                console.info(min + " - " + value + " - " + max);
+                //console.info(min + " - " + value + " - " + max);
             }
         }
     }
