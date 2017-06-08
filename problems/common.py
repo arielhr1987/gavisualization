@@ -9,7 +9,7 @@ from sklearn.manifold import TSNE, MDS, Isomap, LocallyLinearEmbedding, Spectral
 path = 'data'
 methods = {
     'TSNE': TSNE,
-    # 'MDS': MDS,
+    'MDS': MDS,
     # 'Isomap': Isomap,
     # 'SE': SpectralEmbedding,  # Hessian Eigenmapping
     # 'LLE': LocallyLinearEmbedding,

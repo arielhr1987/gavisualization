@@ -26,15 +26,19 @@
 
 #simple-slider-generation,
 #simple-slider-generation-2d,
+#heatmap-slider-generation,
 #progress-slider-generation,
-#progress-slider-generation-2d {
+#progress-slider-generation-2d,
+#heatmap-slider-generation-2d {
     margin-top: 15px;
 }
 
 #simple-slider-generation:before,
 #simple-slider-generation-2d:before,
+#heatmap-slider-generation:before,
 #progress-slider-generation:before,
-#progress-slider-generation-2d:before {
+#progress-slider-generation-2d:before,
+#heatmap-slider-generation-2d:before {
     content: "Generation: ";
 }
 
