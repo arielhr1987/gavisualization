@@ -4,11 +4,11 @@ import sys
 import time
 
 import numpy
-from sklearn.manifold import TSNE, MDS, Isomap, LocallyLinearEmbedding, SpectralEmbedding
+from sklearn.manifold import MDS
 
 path = 'data'
 methods = {
-    'TSNE': TSNE,
+    # 'TSNE': TSNE,
     'MDS': MDS,
     # 'Isomap': Isomap,
     # 'SE': SpectralEmbedding,  # Hessian Eigenmapping
@@ -51,7 +51,7 @@ def save(all, extra={}):
 def save_data(all, extra):
     pop2d = list()
     pop3d = list()
-    fitness = list();
+    fitness = list()
     solution = extra['solution']
     print 'Reducing results for %s problem' % extra['problem']
 
@@ -75,7 +75,6 @@ def save_data(all, extra):
     elif method == "TSNE" or method == "MDS" or method == "Isomap" or method == "LLE" or method == "SE":
         model = func(n_components=2)
 
-    # model = TSNE(n_components=2, random_state=0)
     gen2d = model.fit_transform(matrix)
     gen2d_solution = gen2d[-1].tolist()
     gen2d = gen2d[:-1]
@@ -90,8 +89,6 @@ def save_data(all, extra):
         model = func(n_components=3, method=param)
     elif method == "TSNE" or method == "MDS" or method == "Isomap" or method == "LLE" or method == "SE":
         model = func(n_components=3)
-
-    # model = func(n_components=3)
 
     gen3d = model.fit_transform(matrix)
     gen3d_solution = gen3d[-1].tolist()

@@ -19,17 +19,19 @@
 
 import random
 
+import scipy
 from deap import base
 from deap import creator
 from deap import tools
 
 from problems import common
 
-population_size = 300
-individual_size = 100
+population_size = 100
+individual_size = 20
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMax)
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
 
 toolbox = base.Toolbox()
 
@@ -52,8 +54,12 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 
 # the goal ('fitness') function to be maximized
+# def evalOneMax(individual):
+#     return sum(individual),
+
 def evalOneMax(individual):
-    return sum(individual),
+    sol = [1] * individual_size
+    return scipy.spatial.distance.euclidean(individual, sol),
 
 
 # ----------
@@ -92,7 +98,8 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs
-    CXPB, MUTPB, NGEN = 0.5, 0.2, 40
+    # CXPB, MUTPB, NGEN = 0.5, 0.2, 200
+    CXPB, MUTPB, NGEN = 0.4, 0.7, 200
 
     print("Start of evolution")
 
@@ -160,7 +167,7 @@ def main():
     print("-- End of (successful) evolution --")
 
     best_ind = tools.selBest(pop, 1)[0]
-    print("Best individual is %s, %s" % (best_ind, best_ind.fitness.values))
+    print("Best individual is %s, \n Fitness: %s" % (best_ind, best_ind.fitness.values))
     common.save(all, {
         'problem': 'onemax',
         'pop_size': population_size,

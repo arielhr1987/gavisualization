@@ -458,7 +458,7 @@ Array.prototype.min = function () {
 };
 
 function colors(fitness, min, max) {
-    let count = 5;
+    let count = 10;
     let colors = [];
     // let startColor = [255, 255, 0];
     // let finalColor = [255, 0, 0];
@@ -482,14 +482,14 @@ function colors(fitness, min, max) {
     }
     colors = [
         "#00FF40",
-        // "#1EFF74",
+        "#1EFF74",
         "#35FFA6",
-        // "#45FFD4",
+        "#45FFD4",
         "#4BFFFF",
-        // "#49E9FF",
+        "#49E9FF",
         "#3EBDFF",
-        //"#2A8EFF",
-        // "#1E74FF",
+        "#2A8EFF",
+        "#1E74FF",
         "#0040FF"
 
     ];
